@@ -97,7 +97,7 @@ export default function EditEmployee({
   }, [data, form]);
 
   const onSubmit = async (
-    values: z.input<typeof UpdateEmployeeAccountBody>
+    values: z.input<typeof UpdateEmployeeAccountBody>,
   ) => {
     if (updateAccountMutation.isPending) return;
     try {
@@ -108,9 +108,8 @@ export default function EditEmployee({
       if (file) {
         const formData = new FormData();
         formData.append("file", file);
-        const uploadImageResult = await uploadMediaMutation.mutateAsync(
-          formData
-        );
+        const uploadImageResult =
+          await uploadMediaMutation.mutateAsync(formData);
         const imageURL = uploadImageResult.payload.data;
         body = {
           ...body,
@@ -182,7 +181,7 @@ export default function EditEmployee({
                           if (file) {
                             setFile(file);
                             field.onChange(
-                              "http://localhost:3000/" + file.name
+                              "http://localhost:3000/" + file.name,
                             );
                           }
                         }}
@@ -237,7 +236,7 @@ export default function EditEmployee({
                 render={({ field }) => (
                   <FormItem>
                     <div className="grid grid-cols-4 items-center justify-items-start gap-4">
-                      <Label htmlFor="role">Trạng thái</Label>
+                      <Label htmlFor="role">Vai trò</Label>
                       <div className="col-span-3 w-full space-y-2">
                         <Select
                           onValueChange={field.onChange}

@@ -74,6 +74,7 @@ export const removeTokensFromLocalStorage = () => {
 export const checkAndRefreshToken = async (param?: {
   onError?: () => void;
   onSuccess?: () => void;
+  force?: boolean;
 }) => {
   // Không nên đưa logic lấy access và refresh token ra khỏi cái function checkAndRefreshToken
   // Vì để mỗi lần mà checkAndRefreshToken() được gọi thì chúng ta sẽ có 1 access và refresh token mới
@@ -100,8 +101,9 @@ export const checkAndRefreshToken = async (param?: {
   // Thời gian còn lại sẽ tính dựa trên công thức: decodedAccessToken.exp - now
   //  Thời gian hết hạn của access token dựa trên công thức: decodedAccessToken.exp - decodedAccessToken.iat
   if (
+    param?.force ||
     decodedAccessToken.exp - now <
-    (decodedAccessToken.exp - decodedAccessToken.iat) / 3
+      (decodedAccessToken.exp - decodedAccessToken.iat) / 3
   ) {
     // Gọi API refresh token
     try {
@@ -130,7 +132,7 @@ export const formatCurrency = (number: number) => {
 };
 
 export const getVietnameseDishStatus = (
-  status: (typeof DishStatus)[keyof typeof DishStatus]
+  status: (typeof DishStatus)[keyof typeof DishStatus],
 ) => {
   switch (status) {
     case DishStatus.Available:
@@ -143,7 +145,7 @@ export const getVietnameseDishStatus = (
 };
 
 export const getVietnameseOrderStatus = (
-  status: (typeof OrderStatus)[keyof typeof OrderStatus]
+  status: (typeof OrderStatus)[keyof typeof OrderStatus],
 ) => {
   switch (status) {
     case OrderStatus.Delivered:
@@ -160,7 +162,7 @@ export const getVietnameseOrderStatus = (
 };
 
 export const getVietnameseTableStatus = (
-  status: (typeof TableStatus)[keyof typeof TableStatus]
+  status: (typeof TableStatus)[keyof typeof TableStatus],
 ) => {
   switch (status) {
     case TableStatus.Available:
@@ -197,14 +199,14 @@ export function removeAccents(str: string) {
 
 export const simpleMatchText = (fullText: string, matchText: string) => {
   return removeAccents(fullText.toLowerCase()).includes(
-    removeAccents(matchText.trim().toLowerCase())
+    removeAccents(matchText.trim().toLowerCase()),
   );
 };
 
 export const formatDateTimeToLocaleString = (date: string | Date) => {
   return format(
     date instanceof Date ? date : new Date(date),
-    "HH:mm:ss dd/MM/yyyy"
+    "HH:mm:ss dd/MM/yyyy",
   );
 };
 
