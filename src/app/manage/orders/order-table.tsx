@@ -57,7 +57,7 @@ import {
 import { useGetTableList } from "@/src/queries/useTable";
 import TableSkeleton from "./table-skeleton";
 import { toast } from "@/src/components/ui/use-toast";
-import socket from "@/src/lib/socket";
+import { useAppContext } from "@/src/components/app-provider";
 import { GuestCreateOrdersResType } from "@/src/schemaValidations/guest.schema";
 
 export const OrderTableContext = createContext({
@@ -111,6 +111,7 @@ export default function OrderTable() {
     pageIndex, // Gía trị mặc định ban đầu, không có ý nghĩa khi data được fetch bất đồng bộ
     pageSize: PAGE_SIZE, //default page size
   });
+  const { socket } = useAppContext();
 
   const updateOrderMutation = useUpdateOrderQuery();
 
@@ -161,7 +162,7 @@ export default function OrderTable() {
 
   useEffect(() => {
     function onConnect() {
-      console.log("on Connect: ", socket.id);
+      console.log("on Connect: ", socket?.id);
     }
 
     function onDisconnect() {
@@ -197,18 +198,18 @@ export default function OrderTable() {
       refetch();
     }
 
-    socket.on("connect", onConnect);
-    socket.on("disconnect", onDisconnect);
-    socket.on("update-order", onUpdateOrder);
-    socket.on("new-order", onNewOrder);
-    socket.on("payment", onPayment);
+    socket?.on("connect", onConnect);
+    socket?.on("disconnect", onDisconnect);
+    socket?.on("update-order", onUpdateOrder);
+    socket?.on("new-order", onNewOrder);
+    socket?.on("payment", onPayment);
 
     return () => {
-      socket.off("connect", onConnect);
-      socket.off("disconnect", onDisconnect);
-      socket.off("update-order", onUpdateOrder);
-      socket.off("new-order", onNewOrder);
-      socket.off("payment", onPayment);
+      socket?.off("connect", onConnect);
+      socket?.off("disconnect", onDisconnect);
+      socket?.off("update-order", onUpdateOrder);
+      socket?.off("new-order", onNewOrder);
+      socket?.off("payment", onPayment);
     };
   }, [refetchOrderList, fromDate, toDate]);
 

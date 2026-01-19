@@ -6,7 +6,8 @@ import { formatCurrency, getVietnameseOrderStatus } from "@/src/lib/utils";
 import { useEffect, useMemo } from "react";
 import { useGuestGetOrderListQuery } from "@/src/queries/useGuest";
 import { Badge } from "@/components/ui/badge";
-import socket from "@/src/lib/socket";
+import { useAppContext } from "@/src/components/app-provider";
+
 import {
   PayGuestOrdersResType,
   UpdateOrderResType,
@@ -17,6 +18,7 @@ import { OrderStatus } from "@/src/constants/type";
 export default function OrdersCart() {
   const { data, refetch } = useGuestGetOrderListQuery();
   const orders = useMemo(() => data?.payload.data ?? [], [data]);
+  const { socket } = useAppContext();
 
   const { waitingForPaying, paid } = useMemo(() => {
     return orders.reduce(
@@ -57,7 +59,7 @@ export default function OrdersCart() {
           price: 0,
           quantity: 0,
         },
-      }
+      },
     );
   }, [orders]);
 
@@ -71,7 +73,7 @@ export default function OrdersCart() {
 
   useEffect(() => {
     function onConnect() {
-      console.log("on Connect: ", socket.id);
+      console.log("on Connect: ", socket?.id);
     }
 
     function onDisconnect() {
@@ -85,22 +87,22 @@ export default function OrdersCart() {
       } = data;
       toast({
         description: `Món ${name} (SL: ${quantity}) vừa được cập nhật sang trạng thái "${getVietnameseOrderStatus(
-          data.status
+          data.status,
         )}"`,
       });
       refetch();
     }
 
-    socket.on("connect", onConnect);
-    socket.on("disconnect", onDisconnect);
-    socket.on("update-order", onUpdateOrder);
-    socket.on("payment", onPayment);
+    socket?.on("connect", onConnect);
+    socket?.on("disconnect", onDisconnect);
+    socket?.on("update-order", onUpdateOrder);
+    socket?.on("payment", onPayment);
 
     return () => {
-      socket.off("connect", onConnect);
-      socket.off("disconnect", onDisconnect);
-      socket.off("update-order", onUpdateOrder);
-      socket.off("payment", onPayment);
+      socket?.off("connect", onConnect);
+      socket?.off("disconnect", onDisconnect);
+      socket?.off("update-order", onUpdateOrder);
+      socket?.off("payment", onPayment);
     };
   }, [refetch]);
 

@@ -18,7 +18,7 @@ function LogoutPageContent() {
   const { mutateAsync } = useLogoutMutation();
   // Hook để điều hướng
   const router = useRouter();
-  const { setRole } = useAppContext();
+  const { setRole, disconnectSocket } = useAppContext();
   // Hook để đọc tham số (query params) từ URL
   const searchParams = useSearchParams();
   // Lấy access/ refresh token từ URL (được middleware đính kèm)
@@ -66,6 +66,7 @@ function LogoutPageContent() {
           ref.current = null;
         }, 1000);
         setRole();
+        disconnectSocket();
         // Điều hướng người dùng tới trang /login sau khi mutation thành công
         router.push("/login");
       });
@@ -91,7 +92,14 @@ function LogoutPageContent() {
     });
 
     // Các dependencies của useEffect
-  }, [mutateAsync, router, refreshTokenFromUrl, accessTokenFromUrl, setRole]);
+  }, [
+    mutateAsync,
+    router,
+    refreshTokenFromUrl,
+    accessTokenFromUrl,
+    setRole,
+    disconnectSocket,
+  ]);
 
   // Hiển thị nội dung giữ chỗ trong khi xử lý
   return <div>Log out....</div>;

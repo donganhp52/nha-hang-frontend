@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { decodeToken } from "./lib/utils";
 import { Role } from "./constants/type";
 const onlyOwnerPaths = ["/manage/accounts"];
+
+import jwt from "jsonwebtoken";
+import { TokenPayload } from "@/src/types/jwt.types";
 
 const managePaths = ["/manage"];
 const guestPaths = ["/guest"];
@@ -73,4 +75,8 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: ["/manage/:path*", "/guest/:path*", "/login"],
+};
+
+const decodeToken = (token: string) => {
+  return jwt.decode(token) as TokenPayload;
 };
