@@ -10,9 +10,11 @@ import { cn } from "@/src/lib/utils";
 import { Package2, Settings } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useAppContext } from "@/src/components/app-provider";
 
 export default function NavLinks() {
   const pathname = usePathname();
+  const { role } = useAppContext();
 
   return (
     <TooltipProvider>
@@ -28,6 +30,7 @@ export default function NavLinks() {
 
           {menuItems.map((Item, index) => {
             const isActive = pathname === Item.href;
+            if (!Item.roles.includes(role as any)) return null;
             return (
               <Tooltip key={index}>
                 <TooltipTrigger asChild>
@@ -38,7 +41,7 @@ export default function NavLinks() {
                       {
                         "bg-accent text-accent-foreground": isActive,
                         "text-muted-foreground": !isActive,
-                      }
+                      },
                     )}
                   >
                     <Item.Icon className="h-5 w-5" />
@@ -61,7 +64,7 @@ export default function NavLinks() {
                     "bg-accent text-accent-foreground":
                       pathname === "/manage/setting",
                     "text-muted-foreground": pathname !== "/manage/setting",
-                  }
+                  },
                 )}
               >
                 <Settings className="h-5 w-5" />

@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import path from "path";
-import { ur } from "zod/v4/locales";
 import { decodeToken } from "./lib/utils";
 import { Role } from "./constants/type";
+const onlyOwnerPaths = ["/manage/accounts"];
 
 const managePaths = ["/manage"];
 const guestPaths = ["/guest"];
@@ -52,11 +51,19 @@ export function middleware(request: NextRequest) {
     const isGuestGotoManagePath =
       role === Role.Guest &&
       managePaths.some((path) => pathname.startsWith(path));
+    // Không phải Owner nhưng cố tình truy cập vào các route dành cho owner
+    const isNotOwnerGoToOwnerPath =
+      role !== Role.Owner &&
+      onlyOwnerPaths.some((path) => pathname.startsWith(path));
     // manager nhưng cố gắng vào route của guest
     const isOwnerGotoGuestPath =
       role !== Role.Guest &&
       guestPaths.some((path) => pathname.startsWith(path));
-    if (isGuestGotoManagePath || isOwnerGotoGuestPath) {
+    if (
+      isGuestGotoManagePath ||
+      isOwnerGotoGuestPath ||
+      isNotOwnerGoToOwnerPath
+    ) {
       return NextResponse.redirect(new URL("/", request.url));
     }
   }
